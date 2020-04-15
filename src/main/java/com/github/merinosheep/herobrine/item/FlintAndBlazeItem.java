@@ -1,35 +1,31 @@
 package com.github.merinosheep.herobrine.item;
 
-import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
-import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemUseContext;
-import net.minecraft.util.ActionResult;
 import net.minecraft.util.ActionResultType;
-import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
-
-import com.github.merinosheep.herobrine.Main;
-
-import org.apache.logging.log4j.LogManager;
-
-import org.apache.logging.log4j.Logger;
 public class FlintAndBlazeItem extends Item {
     public FlintAndBlazeItem() {
         super(new Item.Properties().setNoRepair().maxStackSize(1).defaultMaxDamage(260));
     }
 
     @Override 
-    public ActionResultType onItemUse(ItemUseContext context) {
-		Block block = context.getWorld().getBlockState(context.getPos()).getBlock();
-		BlockPos pos = context.getPos().up();
+    public ActionResultType onItemUse(ItemUseContext context) {		
+		BlockPos pos = context.getPos().up();//fire shoudl be set on top of the block that was right clicked and not replaced
+		ItemStack stack = context.getItem();
 		context.getWorld().setBlockState(pos,Blocks.FIRE.getDefaultState());
-		if(block==Blocks.NETHERRACK){
-			Main.LOGGER.debug("NETHERACK");
+		stack.setDamage(stack.getDamage()+1); 
+		if (stack.getDamage() >= stack.getMaxDamage()){
+			stack.damageItem(1, context.getPlayer(),(onBroken)-> {
+			});
+			
 		}
-        return ActionResultType.SUCCESS;
+
+		 //if this is reduced to 0, it is automatically "destroyed"
+		 return ActionResultType.SUCCESS;
 	}
+       
 }
+
